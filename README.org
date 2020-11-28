@@ -1,0 +1,140 @@
+#+TITLE: Shelver
+#+AUTHOR: Tom Hartman
+#+DESCRIPTION: Microservice for the Archivist File Management System
+
+* Versions
+** v1
+Initial API
+
+* Configuration
+** Initialization Parameters
+*** v1
+**** host
+ Type: String
+ Description: Name of the storage host where files, text, and pages
+ will be stored
+**** method
+ Type: Enum
+ Valid Values: local, nfs, ssh
+ Description: Connection method for accessing the storage host.
+ Default: local
+**** volumeName
+ Type: String
+ Description: Name of the storage volume (root) of Shelver.
+ Default: shelver
+**** filePath
+ Type: String
+ Description: Relative path off the volumeName of location where files
+ will be stored.
+ Default: files
+**** textPath
+ Type: String
+ Description: Relative path off the volumeName where text
+ representations of the files will be stored.
+ Default: text
+**** pagePath
+ Type: String
+ Description: Relative path off the volumeName where page files are
+ stored.
+ Default: pages
+** Initialization Files
+*** v1
+**** shelver.cfg
+Description: Configuration definition file for the shelver
+microservice defined in 
+* Routes
+** v1
+*** Add File
+**** [POST] Route
+Route Name: v1/add
+Route Type: POST
+**** Description
+**** Parameters
+***** filename
+Type: String
+Description: Name of the file being shelved.
+***** file
+Type: Base64 encoded string
+Decription: The file to be stored as a base64 encoded string.
+***** fileChecksum
+Type: String
+Description: SHA256 checksum of the File being stored.
+***** text
+Type: Base64 encoded string
+Description: The text of the file to be stored as a base64 encoded.
+string
+***** textChecksum
+Type: String
+Description: SHA256 checksum of the text of the file being stored.
+***** pages
+Type: Array of Dictionarys
+Description: Array of the page dictionaries representing the pages of
+the file being stored (See Page dictionary for parameter and type
+information.
+**** Examples
+#+begin_src json
+{
+  'filename': 'MyFile.pdf',
+  'file': '<base64>',
+  'file': '<checksum>',
+  'text': 'This is the text of MyFile.pdf',
+  'text': '<checksum>,
+  'pages': [
+             {
+               'page': '<base64>',
+               'pageNum': 1,
+               'pageChecksum': '<checksum>'
+             },
+             {
+               'page': '<base64>',
+               'pageNum': 2,
+               'pageChecksum': '<checksum>'
+             }
+             ...
+           ]
+}
+#+end_src
+
+*** Delete File
+**** Route
+Route Name: v1/deleteFile/{id}
+Route Type: GET
+**** Description
+Delete a file from the storage volume.
+**** Parameters
+**** Return Value
+Description: JSON object with the id that was deleted
+
+*** GetFile
+**** [GET] Route
+Route Name: v1/getfile/{id}
+**** Description
+Returns file and associated information of a file (pages and text).
+**** Return Value
+Description: JSON object with the file, filename, text and page
+information.
+
+#+begin_src json
+{
+  'filename': 'MyFile.pdf',
+  'file': '<base64>',
+  'file': '<checksum>',
+  'text': 'This is the text of MyFile.pdf',
+  'text': '<checksum>,
+  'pages': [
+             {
+               'page': '<base64>',
+               'pageNum': 1,
+               'pageChecksum': '<checksum>'
+             },
+             {
+               'page': '<base64>',
+               'pageNum': 2,
+               'pageChecksum': '<checksum>'
+             }
+             ...
+           ]
+}
+#+end_src
+
+
